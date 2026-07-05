@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iNTELLiDOCK Ai — Stop being the system.</title>
+<meta name="description" content="Autonomous business logistics. iNTELLiDOCK Ai runs your operation so your team can do work that actually needs them.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{gold:{DEFAULT:'#C9A84C',bright:'#D9B85C'},ink:{950:'#070707',900:'#0F0F0F',800:'#181818',700:'#202020',600:'#2A2A2A',500:'#363636'},chalk:{DEFAULT:'#EFEFEF',dim:'#AAAAAA',muted:'#636363'},silver:'#B4B8C4'},animation:{'fade-up':'fadeUp 0.25s ease-out forwards'},keyframes:{fadeUp:{from:{opacity:'0',transform:'translateY(10px)'},to:{opacity:'1',transform:'translateY(0)'}}}}}}
+</script>
+<style>
+[x-cloak]{display:none!important}
+::selection{background:rgba(201,168,76,0.22);color:#E0C060}
+:focus-visible{outline:2px solid rgba(201,168,76,0.5);outline-offset:2px;border-radius:4px}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#070707}
+::-webkit-scrollbar-thumb{background:#2A2A2A;border-radius:3px}
+:root{--gold:#C9A84C;--glass:rgba(255,255,255,0.06);--glass-gold:rgba(201,168,76,0.22)}
+/* Hero circuit grid */
+.circuit-bg{background-image:radial-gradient(circle at 50% 0%,rgba(201,168,76,0.09) 0%,transparent 58%),radial-gradient(rgba(255,255,255,0.028) 1px,transparent 1px);background-size:100%,30px 30px}
+/* Cards */
+.card{background:#111111;border:1px solid rgba(255,255,255,0.06);transition:border-color 0.2s}
+.card:hover{border-color:rgba(201,168,76,0.2)}
+.card-raised{background:#181818;border:1px solid rgba(255,255,255,0.07)}
+/* Buttons */
+.btn-gold{background:#C9A84C;color:#070707;font-weight:700;border-radius:8px;transition:background 0.15s,box-shadow 0.15s;display:inline-flex;align-items:center;justify-content:center}
+.btn-gold:hover{background:#D9B85C;box-shadow:0 0 22px rgba(201,168,76,0.26)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.11);color:#AAAAAA;border-radius:8px;transition:border-color 0.15s,color 0.15s,background 0.15s;display:inline-flex;align-items:center;justify-content:center}
+.btn-outline:hover{border-color:rgba(201,168,76,0.32);color:#EFEFEF;background:rgba(201,168,76,0.05)}
+/* Typography */
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#C9A84C}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)}
+.divider-gold{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.28),transparent)}
+/* Badge */
+.badge{display:inline-flex;align-items:center;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);color:#C9A84C;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;border-radius:4px}
+/* Status dot */
+.live-dot{width:7px;height:7px;border-radius:50%;background:#C9A84C;display:inline-block;animation:pulse-gold 2.5s ease-in-out infinite}
+@keyframes pulse-gold{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(201,168,76,0.4)}50%{opacity:0.7;box-shadow:0 0 0 5px rgba(201,168,76,0)}}
+/* Feature check */
+.feat::before{content:'✦';color:#C9A84C;font-size:8px;margin-right:8px;vertical-align:middle}
+/* Pricing gold card */
+.pricing-gold{border-color:rgba(201,168,76,0.32)!important;background:linear-gradient(160deg,rgba(201,168,76,0.05) 0%,transparent 55%)!important}
+/* FAQ */
+.faq-border{border-bottom:1px solid rgba(255,255,255,0.06)}
+/* Nav link */
+.nav-link{color:#888;transition:color 0.15s;font-size:14px;font-weight:500}
+.nav-link:hover{color:#EEE}
+.nav-link.active{color:#C9A84C}
+/* Arch node */
+.arch-node{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.18);border-radius:8px;padding:14px 16px}
+/* Page fade */
+.page-view{animation:fadeUp 0.22s ease-out}
+@keyframes fadeUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body x-data="idaiApp()" x-cloak class="bg-ink-950 text-chalk font-sans antialiased min-h-screen">
+
+<!-- ── HEADER ── -->
+<header class="sticky top-0 z-50 bg-ink-950/92 backdrop-blur-xl border-b border-white/[0.055]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-[72px] flex items-center justify-between gap-4">
+
+    <!-- Wordmark -->
+    <button @click="navigate('home')" class="flex items-center gap-3 shrink-0">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#070707;border:1px solid rgba(201,168,76,0.28)">
+        <img src="data:image/jpeg;base64,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" alt="" class="w-full h-full rounded-xl object-cover">
+      </div>
+      <div class="hidden sm:flex flex-col leading-none gap-[5px]">
+        <span class="font-black text-[14px] tracking-tight leading-none">
+          <span class="text-gold">i</span><span class="text-silver">NTELLI</span><span class="text-gold">D</span><span class="text-silver">OCK A</span><span class="text-gold">i</span>
+        </span>
+        <span class="eyebrow text-chalk-muted">Autonomous Business Logistics</span>
+      </div>
+    </button>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden md:flex items-center gap-0.5">
+      <template x-for="item in nav" :key="item.id">
+        <button @click="navigate(item.id)" :class="page===item.id?'active nav-link bg-ink-800':'nav-link'" class="px-3.5 py-2 rounded-lg transition-colors" x-text="item.label"></button>
+      </template>
+    </nav>
+
+    <!-- CTA + Hamburger -->
+    <div class="flex items-center gap-3">
+      <button @click="openBooking()" class="btn-gold hidden sm:inline-flex px-4 py-2.5 text-sm">Book a Consultation</button>
+      <button @click="menuOpen=!menuOpen" class="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-chalk-dim hover:text-chalk hover:bg-ink-700 transition-colors">
+        <svg x-show="!menuOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg x-show="menuOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div x-show="menuOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="md:hidden border-t border-white/[0.055] bg-ink-900" style="display:none">
+    <div class="max-w-7xl mx-auto px-4 py-4 space-y-1">
+      <template x-for="item in nav" :key="item.id">
+        <button @click="navigate(item.id)" :class="page===item.id?'text-gold bg-ink-700':'text-chalk-dim hover:text-chalk hover:bg-ink-700'" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors" x-text="item.label"></button>
+      </template>
+      <div class="pt-3 border-t border-white/[0.055]">
+        <button @click="menuOpen=false;openBooking()" class="btn-gold w-full py-3 text-sm">Book a Consultation</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- ════════════════════════════════════
+     HOME VIEW
+════════════════════════════════════ -->
+<div x-show="page==='home'" x-transition class="page-view" style="display:none">
+
+  <!-- Hero -->
+  <section class="circuit-bg relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28 px-4">
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2.5 mb-8 px-4 py-2 rounded-full bg-ink-800 border border-white/[0.07]">
+        <span class="live-dot"></span>
+        <span class="eyebrow text-chalk-muted tracking-widest">New category · Autonomous Business Logistics</span>
+      </div>
+      <h1 class="font-black leading-[1.02] tracking-tight text-chalk mb-6" style="font-size:clamp(2.5rem,9vw,4.5rem)">
+        Stop being<br class="hidden sm:block"> the system.
+      </h1>
+      <p class="text-base sm:text-xl text-chalk-dim font-light leading-relaxed max-w-2xl mx-auto mb-10">
+        iNTELLiDOCK Ai runs the moving parts of your operation — the follow-ups, the approvals, the alerts, the handoffs — so your team does the work that actually needs them.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+        <button @click="navigate('features')" class="btn-gold w-full sm:w-auto px-7 py-3.5 text-sm font-bold">See how it works</button>
+        <button @click="openBooking()" class="btn-outline w-full sm:w-auto px-7 py-3.5 text-sm">Talk to us about your operation</button>
+      </div>
+      <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-chalk-muted font-mono tracking-wide">
+        <span>Deterministic rules</span>
+        <span class="hidden sm:inline text-ink-600">·</span>
+        <span>Human-first control</span>
+        <span class="hidden sm:inline text-ink-600">·</span>
+        <span>No developer setup</span>
+        <span class="hidden sm:inline text-ink-600">·</span>
+        <span>Live within a week</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- The Problem -->
+  <section class="py-16 sm:py-20 px-4 bg-ink-900">
+    <div class="max-w-3xl mx-auto text-center mb-10">
+      <p class="eyebrow mb-3">The problem</p>
+      <h2 class="font-black text-2xl sm:text-4xl text-chalk tracking-tight">Every operator knows the feeling.</h2>
+    </div>
+    <div class="max-w-3xl mx-auto space-y-3 mb-10">
+      <div class="card rounded-xl p-5">
+        <p class="text-chalk-dim text-sm leading-relaxed">The onboarding checklist that got stuck on step three because two people thought the other was following up.</p>
+      </div>
+      <div class="card rounded-xl p-5">
+        <p class="text-chalk-dim text-sm leading-relaxed">The vendor shipment nobody confirmed because the person who handles that was out.</p>
+      </div>
+      <div class="card rounded-xl p-5">
+        <p class="text-chalk-dim text-sm leading-relaxed">The project milestone that slipped a week because the approval sat in an inbox nobody checked.</p>
+      </div>
+    </div>
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="text-chalk-dim text-sm sm:text-base leading-relaxed mb-5">It's that the systems holding the operation together are calendars, sticky notes, and the memories of three or four key people. Those systems fail in the same way, over and over, at predictable points — just never at predictable times.</p>
+      <p class="font-black text-chalk text-lg sm:text-xl tracking-tight leading-snug">You don't have a people problem.<br class="hidden sm:block"> <span class="text-gold">You have an operations problem dressed up as a people problem.</span></p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Who It's For -->
+  <section class="py-16 sm:py-24 px-4">
+    <div class="max-w-3xl mx-auto text-center mb-10">
+      <p class="eyebrow mb-3">Who it's for</p>
+      <h2 class="font-black text-2xl sm:text-4xl text-chalk tracking-tight">Built for the operator who's tired of being the system.</h2>
+    </div>
+    <div class="max-w-2xl mx-auto space-y-3">
+      <div class="card-raised rounded-xl p-5 flex items-start gap-3">
+        <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <p class="text-chalk-dim text-sm leading-relaxed">If you run a business with more than five people and you're still the bottleneck for things that shouldn't need you — you're our person.</p>
+      </div>
+      <div class="card-raised rounded-xl p-5 flex items-start gap-3">
+        <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <p class="text-chalk-dim text-sm leading-relaxed">If you've ever tried to "implement Asana" or "set up automations in Zapier" and ended up with seventeen tools that don't talk to each other — you're our person.</p>
+      </div>
+      <div class="card-raised rounded-xl p-5 flex items-start gap-3">
+        <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <p class="text-chalk-dim text-sm leading-relaxed">If you've watched a tool promise to "transform your business with AI" and deliver a slightly smarter spell-checker — you're our person.</p>
+      </div>
+      <div class="card-raised rounded-xl p-5 flex items-start gap-3" style="border-color:rgba(201,168,76,0.28);background:rgba(201,168,76,0.04)">
+        <svg class="w-5 h-5 text-gold shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <p class="text-chalk text-sm leading-relaxed font-medium">If you've already hired a part-time ops coordinator and you're still the bottleneck — you're <span class="text-gold font-semibold">definitely</span> our person.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3 Pillars: What it does -->
+  <section class="py-16 sm:py-24 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <p class="eyebrow mb-3">What it does</p>
+        <h2 class="font-black text-2xl sm:text-4xl text-chalk tracking-tight">It listens. It remembers. It acts.</h2>
+        <p class="mt-4 text-chalk-dim text-sm sm:text-base max-w-xl mx-auto leading-relaxed">Every input to your business gets read, categorized, routed, and actioned. Without anyone having to push it.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4 sm:gap-6">
+        <div class="card rounded-2xl p-6 sm:p-8">
+          <div class="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-chalk mb-3">It listens.</h3>
+          <p class="text-chalk-dim text-sm leading-relaxed">Email, SMS, web forms, voice, calendar triggers — every inbound channel monitored continuously. Every input read, classified, and queued without a human touching it.</p>
+          <p class="eyebrow text-chalk-muted mt-5">24 / 7 intake</p>
+        </div>
+        <div class="card rounded-2xl p-6 sm:p-8">
+          <div class="w-11 h-11 rounded-xl bg-silver/10 flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-silver" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 2.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125m16.5 2.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-chalk mb-3">It remembers.</h3>
+          <p class="text-chalk-dim text-sm leading-relaxed">Every client, vendor, project, and event lives in one structured database. No more digging through email threads. The context is always there when the next step needs it.</p>
+          <p class="eyebrow text-chalk-muted mt-5">Structured central state</p>
+        </div>
+        <div class="card rounded-2xl p-6 sm:p-8">
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-chalk mb-3">It acts.</h3>
+          <p class="text-chalk-dim text-sm leading-relaxed">Send the follow-up. Route the approval. Trigger the alert. Update the record. Escalate if nothing happens. The operation moves whether you're watching or not.</p>
+          <p class="eyebrow text-chalk-muted mt-5">Deterministic execution</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Services Snapshot -->
+  <section class="py-16 sm:py-24 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div>
+          <p class="eyebrow mb-3">Platform</p>
+          <h2 class="font-black text-2xl sm:text-3xl text-chalk tracking-tight">Five operational services. One system.</h2>
+        </div>
+        <button @click="navigate('services')" class="btn-outline px-5 py-2.5 text-sm shrink-0">All services →</button>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card rounded-xl p-5 sm:p-6">
+          <div class="w-9 h-9 rounded-lg bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-4 h-4 text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-bold text-chalk text-sm mb-2">Automated Intake</h3>
+          <p class="text-chalk-muted text-xs leading-relaxed">Every inbound channel — read, classified, and queued without a human touching it.</p>
+        </div>
+        <div class="card rounded-xl p-5 sm:p-6">
+          <div class="w-9 h-9 rounded-lg bg-silver/10 flex items-center justify-center mb-4">
+            <svg class="w-4 h-4 text-silver" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+          </div>
+          <h3 class="font-bold text-chalk text-sm mb-2">Rules-Based Routing</h3>
+          <p class="text-chalk-muted text-xs leading-relaxed">Your plain-English rules decide what happens next. Same input, same output, every time.</p>
+        </div>
+        <div class="card rounded-xl p-5 sm:p-6">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4">
+            <svg class="w-4 h-4 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-bold text-chalk text-sm mb-2">Human-in-the-Loop</h3>
+          <p class="text-chalk-muted text-xs leading-relaxed">Decisions that need a person reach the right person fast. Everything else keeps moving.</p>
+        </div>
+        <div class="card rounded-xl p-5 sm:p-6">
+          <div class="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
+            <svg class="w-4 h-4 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+          </div>
+          <h3 class="font-bold text-chalk text-sm mb-2">Reporting & Visibility</h3>
+          <p class="text-chalk-muted text-xs leading-relaxed">Live dashboard, automated summaries, and a full audit trail on every system action.</p>
+        </div>
+        <div class="card rounded-xl p-5 sm:p-6">
+          <div class="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4">
+            <svg class="w-4 h-4 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-bold text-chalk text-sm mb-2">Managed Configuration</h3>
+          <p class="text-chalk-muted text-xs leading-relaxed">We configure it, you approve it in plain English, we maintain it. No developer required.</p>
+        </div>
+        <div class="card rounded-xl p-5 sm:p-6 flex flex-col justify-between" style="border-color:rgba(201,168,76,0.15);background:rgba(201,168,76,0.03)">
+          <div>
+            <p class="eyebrow mb-2">Enterprise</p>
+            <h3 class="font-bold text-chalk text-sm mb-2">Dedicated Environment</h3>
+            <p class="text-chalk-muted text-xs leading-relaxed">Your own GCP project, your own databases. Not multi-tenant. SOC2-track ready.</p>
+          </div>
+          <button @click="navigate('services')" class="btn-outline mt-4 px-4 py-2 text-xs self-start">Learn more →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Pricing Snapshot -->
+  <section class="py-16 sm:py-24 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div>
+          <p class="eyebrow mb-3">Pricing</p>
+          <h2 class="font-black text-2xl sm:text-3xl text-chalk tracking-tight">Three ways to bring it in.</h2>
+        </div>
+        <button @click="navigate('pricing')" class="btn-outline px-5 py-2.5 text-sm shrink-0">Full pricing details →</button>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="card rounded-2xl p-6 sm:p-8 flex flex-col">
+          <p class="eyebrow text-chalk-muted mb-3">Solo Operator</p>
+          <div class="mb-3"><span class="font-black text-4xl text-chalk">$79</span><span class="text-chalk-muted text-sm ml-1">/ mo</span></div>
+          <p class="text-chalk-dim text-xs leading-relaxed mb-6 flex-1">For the founder where one person is the operational glue. One workspace, core channels, workflow engine.</p>
+          <button @click="openBooking('solo')" class="btn-outline w-full py-2.5 text-sm">Get Started</button>
+        </div>
+        <div class="card pricing-gold rounded-2xl p-6 sm:p-8 flex flex-col relative">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap"><span class="badge">Recommended</span></div>
+          <p class="eyebrow mb-3">Team</p>
+          <div class="mb-3"><span class="font-black text-4xl text-chalk">$249</span><span class="text-chalk-muted text-sm ml-1">/ mo</span></div>
+          <p class="text-chalk-dim text-xs leading-relaxed mb-6 flex-1">For growing operations — 5 to 50 people. Multiple users, role-based access, expanded channels, group approvals.</p>
+          <button @click="openBooking('team')" class="btn-gold w-full py-2.5 text-sm">Get Started</button>
+        </div>
+        <div class="card rounded-2xl p-6 sm:p-8 flex flex-col">
+          <p class="eyebrow text-chalk-muted mb-3">Enterprise</p>
+          <p class="text-chalk-muted text-[10px] font-mono uppercase tracking-wider mb-0.5">Starting at</p><div class="mb-3"><span class="font-black text-4xl text-chalk">$499</span><span class="text-chalk-muted text-sm ml-1">/ mo</span></div>
+          <p class="text-chalk-dim text-xs leading-relaxed mb-6 flex-1">Dedicated GCP environment, O365, full RBAC, SOC2-track. Your data on infrastructure that's yours.</p>
+          <button @click="openBooking('enterprise')" class="btn-outline w-full py-2.5 text-sm">Talk to Us</button>
+        </div>
+      </div>
+      <p class="text-center text-chalk-muted text-xs mt-6 font-mono">All plans begin with a structured consultation. <button @click="navigate('pricing')" class="text-gold hover:text-gold-bright underline underline-offset-2">Here's how that works →</button></p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Final CTA -->
+  <section class="py-20 sm:py-28 px-4 text-center relative overflow-hidden">
+    <div class="absolute inset-0" style="background:radial-gradient(circle at 50% 100%,rgba(201,168,76,0.07) 0%,transparent 60%)"></div>
+    <div class="max-w-2xl mx-auto relative z-10">
+      <p class="eyebrow mb-5">Ready to stop being the bottleneck?</p>
+      <h2 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight leading-tight mb-5">Your business deserves to run<br class="hidden sm:block"> when you're not looking.</h2>
+      <p class="text-chalk-dim text-base mb-8">So do you.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button @click="openBooking()" class="btn-gold w-full sm:w-auto px-8 py-3.5 text-sm font-bold">Book a Consultation</button>
+        <button @click="navigate('about')" class="btn-outline w-full sm:w-auto px-8 py-3.5 text-sm">Who built this →</button>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /home -->
+
+<!-- ════════════════════════════════════
+     SERVICES VIEW
+════════════════════════════════════ -->
+<div x-show="page==='services'" x-transition class="page-view" style="display:none">
+  <section class="circuit-bg pt-14 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="eyebrow mb-4">Services</p>
+      <h1 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight mb-5">Five services. One operating system.</h1>
+      <p class="text-chalk-dim text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">They don't work in isolation — they work together. Every intake flows into routing. Every routing decision flows into action or escalation. Every action is logged.</p>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section class="py-16 px-4">
+    <div class="max-w-5xl mx-auto space-y-5">
+      <div class="card rounded-2xl p-6 sm:p-8 lg:p-10">
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-10">
+          <div class="lg:col-span-4">
+            <div class="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center mb-5"><svg class="w-6 h-6 text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+            <p class="eyebrow mb-2">Service 01</p>
+            <h2 class="font-black text-xl sm:text-2xl text-chalk tracking-tight">Automated Intake</h2>
+            <p class="text-chalk-dim text-sm mt-2 leading-relaxed">Every input channel your business runs on — read, classified, and routed the moment it arrives.</p>
+          </div>
+          <div class="lg:col-span-8">
+            <p class="text-chalk-dim text-sm leading-relaxed mb-5">iNTELLiDOCK Ai monitors every inbound channel continuously. When something arrives — an email, a form submission, a customer text, a calendar event — it is immediately read, its intent extracted, and placed into the correct queue. No human intervention required at intake.</p>
+            <div class="grid sm:grid-cols-2 gap-2">
+              <p class="feat text-chalk-dim text-xs">Email (SMTP / IMAP — any provider)</p>
+              <p class="feat text-chalk-dim text-xs">SMS inbound parsing</p>
+              <p class="feat text-chalk-dim text-xs">Web form submissions</p>
+              <p class="feat text-chalk-dim text-xs">QR code asset forms (Team+)</p>
+              <p class="feat text-chalk-dim text-xs">Calendar trigger events</p>
+              <p class="feat text-chalk-dim text-xs">File upload events</p>
+              <p class="feat text-chalk-dim text-xs opacity-60">Voice transcription (roadmap)</p>
+              <p class="feat text-chalk-dim text-xs opacity-60">Chat message intake (roadmap)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card rounded-2xl p-6 sm:p-8 lg:p-10">
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-10">
+          <div class="lg:col-span-4">
+            <div class="w-12 h-12 rounded-xl bg-silver/10 flex items-center justify-center mb-5"><svg class="w-6 h-6 text-silver" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg></div>
+            <p class="eyebrow mb-2">Service 02</p>
+            <h2 class="font-black text-xl sm:text-2xl text-chalk tracking-tight">Rules-Based Routing</h2>
+            <p class="text-chalk-dim text-sm mt-2 leading-relaxed">Your plain-English rules decide what happens next. Written by us, reviewed by you, before anything runs.</p>
+          </div>
+          <div class="lg:col-span-8">
+            <p class="text-chalk-dim text-sm leading-relaxed mb-5">Once an input is classified, the workflow engine applies your rules to decide what happens next. Same input, same output, always. Rules branch, escalate, wait for responses, and resume — exactly as you specified. No AI improvisation in the decision layer.</p>
+            <div class="grid sm:grid-cols-2 gap-2">
+              <p class="feat text-chalk-dim text-xs">Plain-English rule configuration</p>
+              <p class="feat text-chalk-dim text-xs">Conditional branching and escalation</p>
+              <p class="feat text-chalk-dim text-xs">Multi-step sequences with wait states</p>
+              <p class="feat text-chalk-dim text-xs">Timeouts and auto-escalation</p>
+              <p class="feat text-chalk-dim text-xs">Full audit trail on every action</p>
+              <p class="feat text-chalk-dim text-xs">Config review before deployment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card rounded-2xl p-6 sm:p-8 lg:p-10">
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-10">
+          <div class="lg:col-span-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-5"><svg class="w-6 h-6 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+            <p class="eyebrow mb-2">Service 03</p>
+            <h2 class="font-black text-xl sm:text-2xl text-chalk tracking-tight">Human-in-the-Loop</h2>
+            <p class="text-chalk-dim text-sm mt-2 leading-relaxed">When a decision genuinely needs a person, the right person sees it — fast. Everything else keeps moving.</p>
+          </div>
+          <div class="lg:col-span-8">
+            <p class="text-chalk-dim text-sm leading-relaxed mb-5">Automation that removes human judgment from decisions that need it is a liability. iNTELLiDOCK Ai surfaces the situation to the appropriate person, waits for their response, and resumes. You define which decisions those are. Nothing else stops.</p>
+            <div class="grid sm:grid-cols-2 gap-2">
+              <p class="feat text-chalk-dim text-xs">Approval gates with flexible response channels</p>
+              <p class="feat text-chalk-dim text-xs">SMS alerts for urgent escalations</p>
+              <p class="feat text-chalk-dim text-xs">Dashboard notification center</p>
+              <p class="feat text-chalk-dim text-xs">Custom Do-Not-Contact scheduling (Team+)</p>
+              <p class="feat text-chalk-dim text-xs">Role-based escalation paths</p>
+              <p class="feat text-chalk-dim text-xs">Timeout auto-escalation if unresolved</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card rounded-2xl p-6 sm:p-8 lg:p-10">
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-10">
+          <div class="lg:col-span-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-5"><svg class="w-6 h-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></div>
+            <p class="eyebrow mb-2">Service 04</p>
+            <h2 class="font-black text-xl sm:text-2xl text-chalk tracking-tight">Reporting & Visibility</h2>
+            <p class="text-chalk-dim text-sm mt-2 leading-relaxed">See what's moving, what's stalled, and what needs you — without digging for it.</p>
+          </div>
+          <div class="lg:col-span-8">
+            <p class="text-chalk-dim text-sm leading-relaxed mb-5">The dashboard gives you a live view of your operation. Automated reports surface patterns — where escalations cluster, which processes run clean, where delays live. Enterprise clients receive automated quarterly summaries without having to ask.</p>
+            <div class="grid sm:grid-cols-2 gap-2">
+              <p class="feat text-chalk-dim text-xs">Live operations dashboard</p>
+              <p class="feat text-chalk-dim text-xs">Audit log on every system action</p>
+              <p class="feat text-chalk-dim text-xs">Automated operational reports</p>
+              <p class="feat text-chalk-dim text-xs">Escalation and delay pattern analysis</p>
+              <p class="feat text-chalk-dim text-xs">Quarterly summaries (Enterprise)</p>
+              <p class="feat text-chalk-dim text-xs">Automated report generation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card rounded-2xl p-6 sm:p-8 lg:p-10">
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-10">
+          <div class="lg:col-span-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5"><svg class="w-6 h-6 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/></svg></div>
+            <p class="eyebrow mb-2">Service 05</p>
+            <h2 class="font-black text-xl sm:text-2xl text-chalk tracking-tight">Managed Configuration</h2>
+            <p class="text-chalk-dim text-sm mt-2 leading-relaxed">We configure it, you approve it, we maintain it. No developer team on your side required.</p>
+          </div>
+          <div class="lg:col-span-8">
+            <p class="text-chalk-dim text-sm leading-relaxed mb-5">iNTELLiDOCK Ai is not self-serve. Every deployment starts with a consultation where we learn how your operation actually works. We translate that into a configuration written in plain English. You read it. You approve it. Then we deploy it. If you want to change something after deployment, you contact us — most changes are live within 24–48 hours.</p>
+            <div class="grid sm:grid-cols-2 gap-2">
+              <p class="feat text-chalk-dim text-xs">Structured business audit (pre-deployment)</p>
+              <p class="feat text-chalk-dim text-xs">Plain-English config review by you</p>
+              <p class="feat text-chalk-dim text-xs">Deployment and testing included</p>
+              <p class="feat text-chalk-dim text-xs">Ongoing configuration maintenance</p>
+              <p class="feat text-chalk-dim text-xs">Change requests: 24–48hr turnaround</p>
+              <p class="feat text-chalk-dim text-xs">Dedicated support contacts (Enterprise)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="max-w-5xl mx-auto mt-12 text-center">
+      <button @click="openBooking()" class="btn-gold px-8 py-3.5 text-sm font-bold">Book your consultation</button>
+      <p class="text-chalk-muted text-xs mt-4 font-mono">All services are included in your plan — activation happens during your consultation.</p>
+    </div>
+  </section>
+</div><!-- /services -->
+
+
+<!-- ════════════════════════════════════
+     FEATURES VIEW
+════════════════════════════════════ -->
+<div x-show="page==='features'" x-transition class="page-view" style="display:none">
+  <section class="circuit-bg pt-14 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="eyebrow mb-4">Features</p>
+      <h1 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight mb-5">The technical picture. Still in plain English.</h1>
+      <p class="text-chalk-dim text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">For the operator who wants to understand what's actually under the hood before making a decision.</p>
+    </div>
+  </section>
+  <div class="divider"></div>
+
+  <!-- Architecture distinction -->
+  <section class="py-16 px-4 bg-ink-900">
+    <div class="max-w-5xl mx-auto">
+      <div class="card-raised rounded-2xl p-6 sm:p-10 lg:p-12">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div>
+            <p class="eyebrow mb-4">The architecture that matters</p>
+            <h2 class="font-black text-2xl sm:text-3xl text-chalk tracking-tight leading-tight mb-5">We don't ask AI to figure it out.</h2>
+            <p class="text-chalk-dim text-sm leading-relaxed mb-4">AI at the edges. Deterministic rules in the middle. The language model reads the input and understands intent. Then your rules — rules you read and approved in plain English — decide what actually happens. Same input, same output, every time.</p>
+            <p class="text-chalk-dim text-sm leading-relaxed">Your invoice doesn't get routed because an AI guessed it should. It gets routed because <span class="text-chalk font-semibold">you decided it should</span>, and the system follows your rule.</p>
+          </div>
+          <div class="space-y-3">
+            <div class="arch-node">
+              <div class="flex items-center gap-3 mb-1"><span class="eyebrow text-chalk-muted">Edge layer</span><span class="badge">AI translation</span></div>
+              <p class="text-sm text-chalk-dim leading-snug">Reads every input, extracts intent, classifies what just happened</p>
+            </div>
+            <div class="flex justify-center"><svg class="w-4 h-5 text-gold opacity-60" fill="currentColor" viewBox="0 0 12 20"><path d="M6 0l3 7H3L6 0zm0 20l-3-7h6l-3 7z"/></svg></div>
+            <div class="arch-node" style="background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.3)">
+              <div class="flex items-center gap-3 mb-1"><span class="eyebrow">Core engine</span><span class="badge">Your rules</span></div>
+              <p class="text-sm text-chalk-dim leading-snug">Applies your plain-English rules. Deterministic. Auditable. Yours.</p>
+            </div>
+            <div class="flex justify-center"><svg class="w-4 h-5 text-gold opacity-60" fill="currentColor" viewBox="0 0 12 20"><path d="M6 0l3 7H3L6 0zm0 20l-3-7h6l-3 7z"/></svg></div>
+            <div class="arch-node">
+              <div class="flex items-center gap-3 mb-1"><span class="eyebrow text-chalk-muted">Output layer</span><span class="badge">AI drafting</span></div>
+              <p class="text-sm text-chalk-dim leading-snug">Drafts replies, formats notifications, generates reports — all rule-triggered</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto space-y-12">
+      <!-- Intake Channels -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center"><span class="eyebrow text-gold" style="font-size:8px">01</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Intake Channels</h2></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Email</p><p class="text-chalk-muted text-xs leading-relaxed">SMTP/IMAP. Works with Gmail, Outlook, most providers. Inbound parsing and routing.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">SMS</p><p class="text-chalk-muted text-xs leading-relaxed">Inbound text parsing via Twilio. Outbound SMS for urgent alerts and HITL approvals.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Web Forms</p><p class="text-chalk-muted text-xs leading-relaxed">Custom and embedded forms. Submissions trigger intake classification automatically.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">QR Asset Forms</p><p class="text-chalk-muted text-xs leading-relaxed">Physical QR codes linked to intake forms. Team and Enterprise tiers.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Calendar Triggers</p><p class="text-chalk-muted text-xs leading-relaxed">Event-based process initiation. A calendar event can start a full sequence.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">File Upload Events</p><p class="text-chalk-muted text-xs leading-relaxed">Document uploads trigger intake and routing with no manual step required.</p></div>
+          <div class="card-raised rounded-xl p-4 opacity-55"><p class="text-chalk text-sm font-semibold mb-1">Voice Transcription <span class="badge ml-1">Roadmap</span></p><p class="text-chalk-muted text-xs leading-relaxed">Voicemail transcription and intake classification.</p></div>
+          <div class="card-raised rounded-xl p-4 opacity-55"><p class="text-chalk text-sm font-semibold mb-1">Chat Intake <span class="badge ml-1">Roadmap</span></p><p class="text-chalk-muted text-xs leading-relaxed">Slack and WhatsApp Business as inbound channels.</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <!-- Workflow Engine -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-silver/10 flex items-center justify-center"><span class="eyebrow text-silver" style="font-size:8px">02</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Workflow Engine</h2></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Plain-English Config</p><p class="text-chalk-muted text-xs leading-relaxed">Rules written in plain English, reviewed by you, approved before deployment. Not in code.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Conditional Branching</p><p class="text-chalk-muted text-xs leading-relaxed">If this, then that. If not, escalate. Every branch is deterministic.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Multi-Step Sequences</p><p class="text-chalk-muted text-xs leading-relaxed">Built-in wait states, timeouts, and resumption — a sequence can span days and still execute correctly.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">HITL Gates</p><p class="text-chalk-muted text-xs leading-relaxed">Pause, notify the right person, wait, resume. Fully configurable per sequence.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Full Audit Trail</p><p class="text-chalk-muted text-xs leading-relaxed">Every action logged. Every decision traceable. Nothing happens without a record.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">DNC Scheduling</p><p class="text-chalk-muted text-xs leading-relaxed">Configurable quiet windows for SMS. Custom on Enterprise, standard defaults on Team.</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <!-- Data & Memory -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center"><span class="eyebrow text-emerald-400" style="font-size:8px">03</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Data & Memory</h2></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Structured Firestore DB</p><p class="text-chalk-muted text-xs leading-relaxed">Per-client database. Five core dataset types: Work Reports, Logs, Analysis, Raw Submissions, Custom.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">AI-Routed Context</p><p class="text-chalk-muted text-xs leading-relaxed">Loads only relevant datasets per request — minimizing noise, maximizing accuracy.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Per-Client Config</p><p class="text-chalk-muted text-xs leading-relaxed">Parameters, rules, and role hierarchy stored separately per client. Your config is yours.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Field Encryption</p><p class="text-chalk-muted text-xs leading-relaxed">Available on Enterprise for sensitive field data.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Firestore TTL</p><p class="text-chalk-muted text-xs leading-relaxed">Auto-expiring records for transient data. Clean database, no manual purging.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">GCS File Storage</p><p class="text-chalk-muted text-xs leading-relaxed">Google Cloud Storage for document-heavy processes. Dedicated on Enterprise.</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <!-- Output & Delivery -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center"><span class="eyebrow text-blue-400" style="font-size:8px">04</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Output & Delivery</h2></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Outbound Email</p><p class="text-chalk-muted text-xs leading-relaxed">AI-drafted, rule-triggered delivery. The AI writes it. The rule decides when it goes.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">SMS Alerts</p><p class="text-chalk-muted text-xs leading-relaxed">Outbound SMS for urgent escalations and HITL. Respects DNC windows.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Dashboard Notifications</p><p class="text-chalk-muted text-xs leading-relaxed">Real-time notifications for relevant events and pending approvals on all tiers.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Calendar Injection</p><p class="text-chalk-muted text-xs leading-relaxed">Automated calendar event creation and task assignment based on rule outcomes.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Automated Reports</p><p class="text-chalk-muted text-xs leading-relaxed">Generated and delivered on schedule. No one needs to ask for them.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">O365 Integration</p><p class="text-chalk-muted text-xs leading-relaxed">Enterprise tier. Native Microsoft 365 delivery and calendar integration.</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <!-- Access & Infra -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center"><span class="eyebrow text-gold" style="font-size:8px">05+</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Access & Enterprise Infrastructure</h2></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div class="card-raised rounded-xl p-4"><p class="badge mb-2">Supreme</p><p class="text-chalk text-sm font-semibold mb-1">Admin Level</p><p class="text-chalk-muted text-xs leading-relaxed">Full system access, token monitoring, user assignment. Founder-level access. Internal only.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="badge mb-2">Admin / CIC</p><p class="text-chalk text-sm font-semibold mb-1">Full Dashboard</p><p class="text-chalk-muted text-xs leading-relaxed">Database access, AI assistant, command center, reports, group management.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="badge mb-2">Standard</p><p class="text-chalk text-sm font-semibold mb-1">Group-Scoped</p><p class="text-chalk-muted text-xs leading-relaxed">Calendar, email, AI-assisted tasks. Scoped to their group only.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="badge mb-2">Trainee</p><p class="text-chalk text-sm font-semibold mb-1">View Only</p><p class="text-chalk-muted text-xs leading-relaxed">Assigned scope. Read access. No action permissions.</p></div>
+        </div>
+        <div class="card rounded-2xl p-6 sm:p-8" style="border-color:rgba(201,168,76,0.18)">
+          <p class="text-chalk-dim text-sm leading-relaxed mb-5">Enterprise clients are not on shared infrastructure. Every enterprise deployment gets a fully dedicated GCP environment — their own project, databases, and storage. No data co-mingling.</p>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <p class="feat text-chalk-dim text-xs">Dedicated GCP project (not multi-tenant)</p>
+            <p class="feat text-chalk-dim text-xs">Dedicated Firestore and GCS buckets</p>
+            <p class="feat text-chalk-dim text-xs">SOC2 / HIPAA-track compliance posture</p>
+            <p class="feat text-chalk-dim text-xs">Custom SSO / SAML identity provider</p>
+            <p class="feat text-chalk-dim text-xs">Custom ERP and security integration</p>
+            <p class="feat text-chalk-dim text-xs">Dedicated consultation + quarterly review</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /features -->
+
+<!-- ════════════════════════════════════
+     INTEGRATIONS VIEW
+════════════════════════════════════ -->
+<div x-show="page==='integrations'" x-transition class="page-view" style="display:none">
+  <section class="circuit-bg pt-14 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="eyebrow mb-4">Integrations</p>
+      <h1 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight mb-5">iNTELLiDOCK Ai connects to the tools you already use.</h1>
+      <p class="text-chalk-dim text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">You don't replace your stack. You give it a central nervous system.</p>
+    </div>
+  </section>
+  <div class="divider"></div>
+
+  <section class="py-14 px-4 bg-ink-900">
+    <div class="max-w-3xl mx-auto card-raised rounded-2xl p-6 sm:p-8 text-center">
+      <p class="text-chalk-dim text-sm sm:text-base leading-relaxed">iNTELLiDOCK Ai isn't trying to be the only tool in your stack. It's the coordination layer. The tools you already use keep doing their specific jobs — iNTELLiDOCK Ai is what connects them to each other, and to the decisions that need to be made.</p>
+    </div>
+  </section>
+
+  <section class="py-16 px-4">
+    <div class="max-w-5xl mx-auto space-y-12">
+
+      <!-- Communication -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center"><span class="eyebrow text-gold" style="font-size:8px">01</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Communication</h2></div>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Email</p><p class="text-chalk-muted text-xs leading-relaxed">SMTP / IMAP. Works with Gmail, Outlook, and most providers.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">SMS</p><p class="text-chalk-muted text-xs leading-relaxed">Twilio-powered inbound parsing and outbound text alerts.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">O365 Native</p><p class="text-chalk-muted text-xs leading-relaxed">Direct Microsoft 365 delivery and calendar integration. Enterprise tier.</p></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Identity & Access -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-silver/10 flex items-center justify-center"><span class="eyebrow text-silver" style="font-size:8px">02</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Identity & Access</h2></div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Google Workspace</p><p class="text-chalk-muted text-xs leading-relaxed">Authentication and calendar sync, ready out of the box.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Custom Identity Provider</p><p class="text-chalk-muted text-xs leading-relaxed">SSO and SAML integration. Enterprise tier.</p></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Infrastructure -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center"><span class="eyebrow text-emerald-400" style="font-size:8px">03</span></div><h2 class="font-black text-xl text-chalk tracking-tight">Infrastructure</h2></div>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Google Cloud Platform</p><p class="text-chalk-muted text-xs leading-relaxed">Cloud Run, Cloud Functions, Firestore, and GCS under the hood.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">Firebase</p><p class="text-chalk-muted text-xs leading-relaxed">Authentication and real-time triggers.</p></div>
+          <div class="card-raised rounded-xl p-4"><p class="text-chalk text-sm font-semibold mb-1">AI Processing Layer</p><p class="text-chalk-muted text-xs leading-relaxed">Model serving for edge translation only — intent recognition and drafting, never decisions.</p></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- On Roadmap -->
+      <div>
+        <div class="flex items-center gap-3 mb-5"><div class="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center"><span class="eyebrow text-purple-400" style="font-size:8px">04</span></div><h2 class="font-black text-xl text-chalk tracking-tight">On the Roadmap</h2></div>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div class="card-raised rounded-xl p-4 opacity-55"><p class="text-chalk text-sm font-semibold mb-1">Slack <span class="badge ml-1">Roadmap</span></p><p class="text-chalk-muted text-xs leading-relaxed">Inbound trigger and outbound notification channel.</p></div>
+          <div class="card-raised rounded-xl p-4 opacity-55"><p class="text-chalk text-sm font-semibold mb-1">Webhooks <span class="badge ml-1">Roadmap</span></p><p class="text-chalk-muted text-xs leading-relaxed">Generic inbound — connects to anything with an API.</p></div>
+          <div class="card-raised rounded-xl p-4 opacity-55"><p class="text-chalk text-sm font-semibold mb-1">WhatsApp Business <span class="badge ml-1">Roadmap</span></p><p class="text-chalk-muted text-xs leading-relaxed">Intake channel for customer messaging.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto mt-12 text-center">
+      <button @click="openBooking()" class="btn-gold px-8 py-3.5 text-sm font-bold">Book your consultation</button>
+      <p class="text-chalk-muted text-xs mt-4 font-mono">Don't see a tool you rely on? Ask us during your consultation — most integrations are a config change, not a code change.</p>
+    </div>
+  </section>
+</div><!-- /integrations -->
+
+
+<!-- ════════════════════════════════════
+     PRICING VIEW
+════════════════════════════════════ -->
+<div x-show="page==='pricing'" x-transition class="page-view" style="display:none">
+  <section class="circuit-bg pt-14 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="eyebrow mb-4">Pricing</p>
+      <h1 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight mb-5">Three ways to bring it in.</h1>
+      <p class="text-chalk-dim text-base sm:text-lg max-w-xl mx-auto leading-relaxed">Simple pricing that scales with your operation. Every plan starts with a consultation.</p>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid lg:grid-cols-3 gap-5 sm:gap-6 mb-14">
+        <div class="card rounded-2xl p-6 sm:p-8 flex flex-col">
+          <p class="eyebrow text-chalk-muted mb-3">Solo Operator</p>
+          <div class="flex items-baseline gap-1 mb-3"><span class="font-black text-5xl text-chalk">$79</span><span class="text-chalk-muted text-sm">/ month</span></div>
+          <p class="text-chalk-dim text-sm leading-relaxed mb-6">For the founder or small team where one person is the operational glue. One business workspace, one AI working in the background.</p>
+          <div class="space-y-2 mb-8 flex-1">
+            <p class="feat text-chalk-dim text-xs">One business workspace</p>
+            <p class="feat text-chalk-dim text-xs">100 AI-processed requests / month</p>
+            <p class="feat text-chalk-dim text-xs">Email, SMS, and web form intake</p>
+            <p class="feat text-chalk-dim text-xs">Core workflow engine</p>
+            <p class="feat text-chalk-dim text-xs">Standard HITL approval alerts</p>
+            <p class="feat text-chalk-dim text-xs">Weekday support</p>
+          </div>
+          <button @click="openBooking('solo')" class="btn-outline w-full py-3 text-sm">Get Started</button>
+          <p class="text-chalk-muted text-xs text-center mt-3 font-mono">Live within a week of consultation</p>
+        </div>
+        <div class="card pricing-gold rounded-2xl p-6 sm:p-8 flex flex-col relative">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap"><span class="badge">Most Popular</span></div>
+          <p class="eyebrow mb-3">Team</p>
+          <div class="flex items-baseline gap-1 mb-3"><span class="font-black text-5xl text-chalk">$249</span><span class="text-chalk-muted text-sm">/ month</span></div>
+          <p class="text-chalk-dim text-sm leading-relaxed mb-6">For growing operations — 5 to 50 people — that need structured access, expanded capacity, and a proper approval hierarchy.</p>
+          <div class="space-y-2 mb-8 flex-1">
+            <p class="feat text-chalk-dim text-xs">Multiple users with role-based access</p>
+            <p class="feat text-chalk-dim text-xs">200 AI-processed requests / month</p>
+            <p class="feat text-chalk-dim text-xs">QR asset pipeline and custom forms</p>
+            <p class="feat text-chalk-dim text-xs">Expanded intake (voice, calendar trigger)</p>
+            <p class="feat text-chalk-dim text-xs">Group-level permissions and approval routing</p>
+            <p class="feat text-chalk-dim text-xs">Custom Do-Not-Contact SMS scheduling</p>
+            <p class="feat text-chalk-dim text-xs">Weekend support</p>
+          </div>
+          <button @click="openBooking('team')" class="btn-gold w-full py-3 text-sm">Get Started</button>
+          <p class="text-chalk-muted text-xs text-center mt-3 font-mono">Best value for established operators</p>
+        </div>
+        <div class="card rounded-2xl p-6 sm:p-8 flex flex-col">
+          <p class="eyebrow text-chalk-muted mb-3">Enterprise</p>
+          <p class="text-chalk-muted text-[10px] font-mono uppercase tracking-wider mb-0.5">Starting at</p><div class="flex items-baseline gap-1 mb-3"><span class="font-black text-5xl text-chalk">$499</span><span class="text-chalk-muted text-sm">/ month</span></div>
+          <p class="text-chalk-muted text-xs mb-3 font-mono">+ dedicated infrastructure</p>
+          <p class="text-chalk-dim text-sm leading-relaxed mb-6">For operations that need their own environment. Your data, your terms, your infrastructure.</p>
+          <div class="space-y-2 mb-8 flex-1">
+            <p class="feat text-chalk-dim text-xs">Dedicated GCP project (not multi-tenant)</p>
+            <p class="feat text-chalk-dim text-xs">500 AI-processed requests / month</p>
+            <p class="feat text-chalk-dim text-xs">Native O365 + identity provider integration</p>
+            <p class="feat text-chalk-dim text-xs">Full RBAC, field-level encryption</p>
+            <p class="feat text-chalk-dim text-xs">Automated quarterly operations reports</p>
+            <p class="feat text-chalk-dim text-xs">SOC2 / HIPAA-track compliance posture</p>
+            <p class="feat text-chalk-dim text-xs">Dedicated support + quarterly review</p>
+          </div>
+          <button @click="openBooking('enterprise')" class="btn-outline w-full py-3 text-sm">Talk to Us</button>
+          <p class="text-chalk-muted text-xs text-center mt-3 font-mono">Dedicated environment · Custom SLA</p>
+        </div>
+      </div>
+      <div class="divider-gold mb-12"></div>
+      <div class="max-w-3xl mx-auto">
+        <p class="eyebrow mb-4 text-center">How we sell</p>
+        <h2 class="font-black text-2xl sm:text-3xl text-chalk tracking-tight mb-6 text-center">We don't hand you a login and disappear.</h2>
+        <div class="card rounded-2xl p-6 sm:p-8 mb-6">
+          <p class="text-chalk-dim text-sm leading-relaxed mb-4">Before we deploy iNTELLiDOCK Ai to your business, we sit down with you for a structured consultation. We learn how your operation actually works — not the org chart version, the real version. We map your intake channels, your approval hierarchy, your edge cases.</p>
+          <p class="text-chalk-dim text-sm leading-relaxed mb-4">That map becomes a configuration file written in plain English. You read it. You approve it. Then we deploy it.</p>
+          <p class="text-chalk-dim text-sm leading-relaxed">From day one, iNTELLiDOCK Ai is already acting on your behalf — without you writing rules, managing prompts, or tuning anything.</p>
+        </div>
+        <div class="card-raised rounded-xl p-5 sm:p-6 mb-6">
+          <div class="grid sm:grid-cols-3 gap-6 text-center sm:text-left">
+            <div><p class="eyebrow text-chalk-muted mb-1">Rate</p><p class="font-black text-2xl text-chalk">$200<span class="text-chalk-muted font-normal text-base"> / hr</span></p></div>
+            <div><p class="eyebrow text-chalk-muted mb-1">Typical duration</p><p class="font-bold text-chalk text-lg">2–4 hours</p></div>
+            <div><p class="eyebrow text-chalk-muted mb-1">Live within</p><p class="font-bold text-chalk text-lg">1 week</p></div>
+          </div>
+        </div>
+        <p class="text-chalk-muted text-xs text-center font-mono leading-relaxed mb-8">The consultation fee is waived for clients who proceed through full implementation.</p>
+        <div class="text-center"><button @click="openBooking()" class="btn-gold px-8 py-3.5 text-sm font-bold">Book your consultation</button></div>
+      </div>
+    </div>
+  </section>
+</div><!-- /pricing -->
+
+
+<!-- ════════════════════════════════════
+     ABOUT VIEW
+════════════════════════════════════ -->
+<div x-show="page==='about'" x-transition class="page-view" style="display:none">
+  <section class="circuit-bg pt-14 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="eyebrow mb-4">About</p>
+      <h1 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight mb-5">This started with frustration.</h1>
+      <p class="text-chalk-dim text-base sm:text-lg max-w-xl mx-auto leading-relaxed">Not with technology. With watching capable operations grind through preventable friction, every single day.</p>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section class="py-16 px-4">
+    <div class="max-w-4xl mx-auto space-y-16">
+      <div>
+        <div class="text-center mb-8">
+          <img src="data:image/jpeg;base64,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" alt="iNTELLiDOCK Ai" class="w-20 h-20 rounded-2xl mx-auto object-cover">
+        </div>
+        <p class="eyebrow mb-4 text-center">The team</p>
+        <h2 class="font-black text-2xl text-chalk tracking-tight mb-8 text-center">Built by operators. Not by a pitch deck.</h2>
+        <div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-12">
+          <div class="card rounded-2xl p-6 sm:p-8">
+            <h3 class="font-black text-chalk text-lg">Michael Allain</h3>
+            <p class="eyebrow mt-1.5 mb-4">Founder &middot; Operations Architect &middot; Sales Lead</p>
+            <p class="text-chalk-dim text-sm leading-relaxed mb-3">Michael grew from mechanic to maintenance management inside a large-scale automated distribution operation &mdash; robotics, miles of conveyor, box-making systems, production-sensitive equipment. He&rsquo;s the person the floor calls when something breaks, and the one leadership calls when a process needs redesigning.</p>
+            <p class="text-chalk-dim text-sm leading-relaxed">He&rsquo;s also the customer-facing half of the founding team &mdash; running demos, discovering pain points on a walkthrough, and translating what he hears into a system that actually gets built. That instinct comes from running his own businesses: pricing, marketing, and closing sales for a laser engraving shop and, before that, an aquatic coral farm. He speaks operator language and business-owner language fluently, because he&rsquo;s been both &mdash; which is exactly the bridge iDAi is built to sell across.</p>
+          </div>
+          <div class="card rounded-2xl p-6 sm:p-8">
+            <h3 class="font-black text-chalk text-lg">Khanan Ben-Dan</h3>
+            <p class="eyebrow mt-1.5 mb-4">Co-Founder &middot; Technical Builder</p>
+            <p class="text-chalk-dim text-sm leading-relaxed mb-3">Khanan is a systems optimizer who has spent his career doing, in miniature, what iDAi now does at scale: finding the friction in a workflow and building the automation that removes it for good. In the field, he&rsquo;s built an enterprise-compliant technician&rsquo;s assistant for parts inquiries, diagnostics, and work-order drafting &mdash; while diagnosing PLCs, sensors, and 3-phase drives on live warehouse automation equipment. His operating principle: fix it once, and make it run itself.</p>
+            <p class="text-chalk-dim text-sm leading-relaxed">Earlier in his career, he engineered a deterministic reporting pipeline that cut executive latency from two hours to five minutes, and built an inventory tracking system that cut shrink by over 15% on the retail floor. Every role points the same direction &mdash; and now he builds that instinct directly into iDAi&rsquo;s engine on Google Cloud Platform.</p>
+          </div>
+        </div>
+        <div class="max-w-2xl mx-auto">
+          <p class="eyebrow mb-4">The origin</p>
+          <h2 class="font-black text-2xl text-chalk tracking-tight mb-5">Years of watching good operations fail at the seams.</h2>
+          <div class="space-y-4 text-chalk-dim text-sm leading-relaxed">
+            <p>We spent years inside industrial operations &mdash; one of us managing maintenance across automated distribution systems, the other servicing warehouse equipment in the field. Different roles, same view: skilled people wasting hours on coordination work, dispatchers holding operations together with phone calls and sticky notes, and information falling through the gaps between systems that were never designed to talk to each other.</p>
+            <p>We each built internal tools that fixed real friction &mdash; and watched how much value one well-designed system could unlock. Most businesses are still running their operations on email, memory, and hope. Not because better isn&rsquo;t possible. Because nobody built it for them.</p>
+            <p class="font-semibold text-chalk italic border-l-2 border-gold/40 pl-4">So we built the system we wished existed. This is it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <p class="eyebrow mb-4">The problem we solve</p>
+        <h2 class="font-black text-2xl text-chalk tracking-tight mb-5">Not another AI product. An actual answer to an actual problem.</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <p class="text-chalk-dim text-sm leading-relaxed">The tools that exist today fall into two camps: tools that help individuals do specific tasks faster, and enterprise software that takes months to implement and requires an IT department to maintain. Neither is what most operators need.</p>
+          <p class="text-chalk-dim text-sm leading-relaxed">Most operators need the work to move without them having to push it. They need the system to remember what was said, follow up when nothing happens, and put a human in the loop only when actually needed. iNTELLiDOCK Ai is built for that problem — the one most businesses are solving with email, memory, and hope.</p>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <p class="eyebrow mb-4">How it's built</p>
+        <h2 class="font-black text-2xl text-chalk tracking-tight mb-5">Opinionated by design.</h2>
+        <p class="text-chalk-dim text-sm leading-relaxed mb-8">Every architectural decision is visible. Every rule is auditable. Every action is logged.</p>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="arch-node"><p class="font-semibold text-chalk text-sm mb-2">AI at edges, determinism in the middle</p><p class="text-chalk-muted text-xs leading-relaxed">Because trust requires predictability, and predictability requires rules. Same input, same output, every time.</p></div>
+          <div class="arch-node"><p class="font-semibold text-chalk text-sm mb-2">GCP-native infrastructure</p><p class="text-chalk-muted text-xs leading-relaxed">Enterprise clients need dedicated environments, not shared pools. Isolation is architecture, not a feature flag.</p></div>
+          <div class="arch-node"><p class="font-semibold text-chalk text-sm mb-2">Plain-English configuration</p><p class="text-chalk-muted text-xs leading-relaxed">If an operator can't read the rules that govern their operation, those rules aren't theirs.</p></div>
+          <div class="arch-node"><p class="font-semibold text-chalk text-sm mb-2">Human-in-the-loop by default</p><p class="text-chalk-muted text-xs leading-relaxed">Automation that removes human judgment from decisions that need it is a liability, not a feature.</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="text-center">
+        <h2 class="font-black text-2xl text-chalk tracking-tight mb-4">Ready to talk about your operation?</h2>
+        <p class="text-chalk-dim text-sm mb-7 max-w-md mx-auto">We don't pitch. We listen, map, and build a system that fits what you actually do.</p>
+        <button @click="openBooking()" class="btn-gold px-8 py-3.5 text-sm font-bold">Book a Consultation</button>
+      </div>
+    </div>
+  </section>
+</div><!-- /about -->
+
+
+<!-- ════════════════════════════════════
+     FAQ VIEW
+════════════════════════════════════ -->
+<div x-show="page==='faq'" x-transition class="page-view" style="display:none">
+  <section class="circuit-bg pt-14 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="eyebrow mb-4">FAQ</p>
+      <h1 class="font-black text-3xl sm:text-5xl text-chalk tracking-tight mb-5">Questions before you commit.</h1>
+      <p class="text-chalk-dim text-base sm:text-lg max-w-xl mx-auto leading-relaxed">Good ones. We'd rather answer them here than watch you wonder.</p>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section class="py-16 px-4">
+    <div class="max-w-3xl mx-auto space-y-12">
+      <div>
+        <p class="eyebrow mb-6">General</p>
+        <div class="border border-white/[0.06] rounded-2xl overflow-hidden">
+          <template x-for="(faq, i) in faqs.general" :key="i">
+            <div class="faq-border">
+              <button @click="toggleFaq('g'+i)" class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-ink-800 transition-colors gap-4">
+                <span class="font-semibold text-chalk text-sm" x-text="faq.q"></span>
+                <svg :class="faqOpen['g'+i]?'rotate-45':''" class="w-4 h-4 text-gold shrink-0 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              </button>
+              <div x-show="faqOpen['g'+i]" x-transition class="px-5 pb-5">
+                <p class="text-chalk-dim text-sm leading-relaxed" x-text="faq.a"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow mb-6">Pricing & Plans</p>
+        <div class="border border-white/[0.06] rounded-2xl overflow-hidden">
+          <template x-for="(faq, i) in faqs.pricing" :key="i">
+            <div class="faq-border">
+              <button @click="toggleFaq('p'+i)" class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-ink-800 transition-colors gap-4">
+                <span class="font-semibold text-chalk text-sm" x-text="faq.q"></span>
+                <svg :class="faqOpen['p'+i]?'rotate-45':''" class="w-4 h-4 text-gold shrink-0 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              </button>
+              <div x-show="faqOpen['p'+i]" x-transition class="px-5 pb-5">
+                <p class="text-chalk-dim text-sm leading-relaxed" x-text="faq.a"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow mb-6">Technical</p>
+        <div class="border border-white/[0.06] rounded-2xl overflow-hidden">
+          <template x-for="(faq, i) in faqs.technical" :key="i">
+            <div class="faq-border">
+              <button @click="toggleFaq('t'+i)" class="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-ink-800 transition-colors gap-4">
+                <span class="font-semibold text-chalk text-sm" x-text="faq.q"></span>
+                <svg :class="faqOpen['t'+i]?'rotate-45':''" class="w-4 h-4 text-gold shrink-0 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              </button>
+              <div x-show="faqOpen['t'+i]" x-transition class="px-5 pb-5">
+                <p class="text-chalk-dim text-sm leading-relaxed" x-text="faq.a"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="text-center pt-2">
+        <p class="text-chalk-muted text-sm mb-5">Still have a question?</p>
+        <button @click="openBooking()" class="btn-gold px-8 py-3.5 text-sm font-bold">Book a Consultation</button>
+      </div>
+    </div>
+  </section>
+</div><!-- /faq -->
+
+
+<!-- ════════════════════════════════════
+     GLOBAL FOOTER
+════════════════════════════════════ -->
+<footer class="border-t border-white/[0.055] bg-ink-900 py-12 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+      <div class="sm:col-span-2 lg:col-span-1">
+        <button @click="navigate('home')" class="flex items-center gap-2.5 mb-4">
+          <div class="w-8 h-8 rounded-lg overflow-hidden"><img src="data:image/jpeg;base64,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" alt="" class="w-full h-full object-cover"></div>
+          <span class="font-black text-sm text-chalk tracking-tight"><span class="text-gold">i</span><span class="text-silver">NTELLI</span><span class="text-gold">D</span><span class="text-silver">OCK A</span><span class="text-gold">i</span></span>
+        </button>
+        <p class="text-chalk-muted text-xs leading-relaxed max-w-[200px]">Autonomous business logistics. Your operation runs without you pushing it.</p>
+        <p class="text-chalk-muted text-xs mt-4 font-mono">info@intellidockai.com</p>
+      </div>
+      <div>
+        <p class="eyebrow text-chalk-muted mb-4">Platform</p>
+        <ul class="space-y-2.5 text-xs text-chalk-muted">
+          <li><button @click="navigate('services')" class="hover:text-chalk transition-colors">Services</button></li>
+          <li><button @click="navigate('features')" class="hover:text-chalk transition-colors">Features</button></li>
+          <li><button @click="navigate('integrations')" class="hover:text-chalk transition-colors">Integrations</button></li>
+          <li><button @click="navigate('pricing')" class="hover:text-chalk transition-colors">Pricing</button></li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow text-chalk-muted mb-4">Company</p>
+        <ul class="space-y-2.5 text-xs text-chalk-muted">
+          <li><button @click="navigate('about')" class="hover:text-chalk transition-colors">About</button></li>
+          <li><button @click="navigate('faq')" class="hover:text-chalk transition-colors">FAQ</button></li>
+          <li><button @click="openBooking()" class="hover:text-chalk transition-colors">Book a Consultation</button></li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow text-chalk-muted mb-4">Infrastructure</p>
+        <ul class="space-y-2 text-xs text-chalk-muted font-mono">
+          <li>GCP-native</li><li>SOC2-track ready</li><li>Single-tenant (Enterprise)</li><li>Auditable config</li>
+        </ul>
+      </div>
+    </div>
+    <div class="divider mb-6"></div>
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-chalk-muted font-mono">
+      <span>&copy; 2026 IntelliDockAI. All rights reserved.</span>
+      <span>intellidockai.com</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ════════════════════════════════════
+     BOOKING MODAL
+════════════════════════════════════ -->
+<div x-show="bookingOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" style="display:none" @click.self="closeBooking()">
+  <div class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
+  <div class="relative w-full sm:max-w-lg bg-ink-900 border border-white/[0.08] sm:rounded-2xl rounded-t-2xl shadow-2xl overflow-hidden" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-4 opacity-0" x-transition:enter-end="translate-y-0 opacity-100">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-white/[0.07]">
+      <div>
+        <h3 class="font-black text-chalk text-lg" x-text="bookingStep===2?'Request received.':'Book a consultation.'"></h3>
+        <p class="text-chalk-muted text-xs mt-0.5" x-show="bookingStep===1">Tell us about your operation. We'll take it from there.</p>
+      </div>
+      <button @click="closeBooking()" class="w-8 h-8 flex items-center justify-center rounded-lg text-chalk-muted hover:text-chalk hover:bg-ink-700 transition-colors"><svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div x-show="bookingStep===1" class="px-6 py-6 space-y-4">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div><label class="eyebrow text-chalk-muted block mb-2">Your name</label><input x-model="bookingForm.name" type="text" placeholder="Michael Allain" class="w-full bg-ink-800 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-chalk placeholder-chalk-muted focus:border-gold/40 focus:outline-none transition-colors"></div>
+        <div><label class="eyebrow text-chalk-muted block mb-2">Email address</label><input x-model="bookingForm.email" type="email" placeholder="you@company.com" class="w-full bg-ink-800 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-chalk placeholder-chalk-muted focus:border-gold/40 focus:outline-none transition-colors"></div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div><label class="eyebrow text-chalk-muted block mb-2">Business / company</label><input x-model="bookingForm.company" type="text" placeholder="Acme Operations Co." class="w-full bg-ink-800 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-chalk placeholder-chalk-muted focus:border-gold/40 focus:outline-none transition-colors"></div>
+        <div><label class="eyebrow text-chalk-muted block mb-2">Team size</label><select x-model="bookingForm.size" class="w-full bg-ink-800 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-chalk focus:border-gold/40 focus:outline-none transition-colors"><option value="">Select range</option><option value="1-5">1–5 people</option><option value="5-20">5–20 people</option><option value="20-50">20–50 people</option><option value="50+">50+ people</option></select></div>
+      </div>
+      <div>
+        <label class="eyebrow text-chalk-muted block mb-2">Plan you're considering</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button @click="bookingForm.tier='solo'" :class="bookingForm.tier==='solo'?'border-gold/40 text-gold bg-gold/5':'border-white/[0.08] text-chalk-muted'" class="py-2 rounded-lg border text-xs font-semibold transition-all">Solo $79</button>
+          <button @click="bookingForm.tier='team'" :class="bookingForm.tier==='team'?'border-gold/40 text-gold bg-gold/5':'border-white/[0.08] text-chalk-muted'" class="py-2 rounded-lg border text-xs font-semibold transition-all">Team $249</button>
+          <button @click="bookingForm.tier='enterprise'" :class="bookingForm.tier==='enterprise'?'border-gold/40 text-gold bg-gold/5':'border-white/[0.08] text-chalk-muted'" class="py-2 rounded-lg border text-xs font-semibold transition-all">Enterprise</button>
+        </div>
+      </div>
+      <div><label class="eyebrow text-chalk-muted block mb-2">What operational problem are you solving?</label><textarea x-model="bookingForm.challenge" rows="3" placeholder="e.g. Inbound requests get lost, onboarding takes too long, follow-ups fall through..." class="w-full bg-ink-800 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-chalk placeholder-chalk-muted focus:border-gold/40 focus:outline-none resize-none transition-colors"></textarea></div>
+    </div>
+    <div x-show="bookingStep===2" class="px-6 py-10 text-center">
+      <div class="w-12 h-12 rounded-full bg-gold/10 border border-gold/25 flex items-center justify-center mx-auto mb-5"><svg class="w-5 h-5 text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <h4 class="font-black text-chalk text-lg mb-3">Consultation request sent.</h4>
+      <p class="text-chalk-dim text-sm leading-relaxed max-w-xs mx-auto">Michael will review your operation and reach out within 24 hours to schedule your session.</p>
+      <p class="text-chalk-muted text-xs mt-4 font-mono" x-text="bookingForm.email"></p>
+    </div>
+    <div class="px-6 py-4 border-t border-white/[0.07]">
+      <div x-show="bookingStep===1" class="flex gap-3"><button @click="closeBooking()" class="btn-outline flex-1 py-2.5 text-sm">Cancel</button><button @click="submitBooking()" class="btn-gold flex-1 py-2.5 text-sm">Send request</button></div>
+      <div x-show="bookingStep===2"><button @click="closeBooking()" class="btn-outline w-full py-2.5 text-sm">Close</button></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     APP SCRIPT
+════════════════════════════════════ -->
+<script>
+function idaiApp() {
+  return {
+    page: 'home',
+    menuOpen: false,
+    bookingOpen: false,
+    bookingStep: 1,
+    bookingForm: { name:'', email:'', company:'', size:'', tier:'team', challenge:'' },
+    faqOpen: {},
+
+    nav: [
+      {id:'home',label:'Home'},{id:'services',label:'Services'},
+      {id:'features',label:'Features'},{id:'integrations',label:'Integrations'},
+      {id:'pricing',label:'Pricing'},{id:'about',label:'About'},{id:'faq',label:'FAQ'}
+    ],
+
+    faqs: {
+      general: [
+        {q:'Is this a chatbot?', a:"No. iNTELLiDOCK Ai does not have a conversational interface for your team or clients by default. It's a background system that watches inputs, executes rules, and surfaces decisions to the right people. Think operations engine, not chat window."},
+        {q:'Do I need to know how to code?', a:"No. Configuration happens in plain English during your consultation. You review and approve the rules before anything runs. If you want to change something after deployment, you tell us and we update it."},
+        {q:'What kinds of businesses does this work for?', a:"Any business with repeatable operational tasks — intake, routing, follow-up, approval, reporting. Field services, staffing, consulting, logistics, and property management are natural fits. If your business runs on email and spreadsheets right now, iNTELLiDOCK Ai can run it better."},
+        {q:'How long does setup take?', a:"Most clients are live within a week of completing the consultation. The consultation itself takes 2–4 hours. Deployment and testing typically takes 3–5 business days after that."},
+        {q:'How is this different from tools I already use?', a:"Your existing tools solve their narrow piece. iNTELLiDOCK Ai handles the coordination layer — the part that decides what should happen across your entire operation and makes sure it actually happens. You'll probably still use your existing tools. iNTELLiDOCK Ai is what connects them."}
+      ],
+      pricing: [
+        {q:'Can I cancel anytime?', a:"Yes. Month-to-month on all plans. No annual contract required unless you negotiate one for a discount."},
+        {q:"What counts as a 'request'?", a:"One complete processing cycle: one intake event read, routed, and acted on. If a single email triggers three downstream tasks, that's one request. Multi-step sequences count as one request per intake event — not per step."},
+        {q:'What happens if I go over my request limit?', a:"You'll receive a notification before you hit the ceiling. You can upgrade your plan, purchase overage capacity, or hold non-critical processing until the next cycle. Nothing breaks."},
+        {q:'What is the consultation fee for?', a:"The consultation is a working session — not a sales call. We map your operation, identify where the system adds the most value, and produce a configuration you read and approve before anything is deployed. The fee is waived for clients who proceed through full implementation."}
+      ],
+      technical: [
+        {q:'Where is my data stored?', a:"Solo Operator and Team clients are on shared GCP infrastructure with strict per-client data isolation. Enterprise clients receive a fully dedicated GCP environment — their own project, databases, and storage. No data co-mingling at any tier."},
+        {q:'Is this HIPAA or SOC2 compliant?', a:"Enterprise deployments are architected to support HIPAA and SOC2 compliance postures — audit logs on every action, field-level encryption available, dedicated infrastructure. Compliance certification is the client's responsibility; the system is built to support it."},
+        {q:'Can it connect to our existing tools?', a:"Yes. iNTELLiDOCK Ai connects to your email provider, calendar, CRM, and most business tools via API or webhook. Enterprise clients can integrate with their existing ERP and identity provider."},
+        {q:'What if we want to change the rules after deployment?', a:"You contact us. We update the configuration, you review it, and we redeploy. Most changes are live within 24–48 hours. Enterprise clients have dedicated support contacts and faster SLAs."}
+      ]
+    },
+
+    navigate(id) {
+      this.page = id;
+      this.menuOpen = false;
+      window.scrollTo({top:0,behavior:'instant'});
+    },
+
+    openBooking(tier='team') {
+      this.bookingForm.tier = tier;
+      this.bookingStep = 1;
+      this.bookingOpen = true;
+    },
+
+    closeBooking() {
+      this.bookingOpen = false;
+      const self = this;
+      setTimeout(()=>{ self.bookingStep=1; self.bookingForm={name:'',email:'',company:'',size:'',tier:'team',challenge:''}; },250);
+    },
+
+    submitBooking() {
+      if(!this.bookingForm.name.trim()||!this.bookingForm.email.trim()) return;
+      this.bookingStep = 2;
+    },
+
+    toggleFaq(key) {
+      this.faqOpen[key] = !this.faqOpen[key];
+    }
+  };
+}
+</script>
+</body>
+</html>
